@@ -1,0 +1,121 @@
+<template name="userLogin">
+
+  {{#if currentUser}}
+    <div class="container">
+      <div class="row">
+
+        <div class="col-md-3">
+          <h4>Group 1</h4>
+          <p>Poker:
+            {{#if groups.group1.members.poker}}
+               <strong>{{groups.group1.members.poker}}</strong>
+            {{else}}
+              <a href="" class="join-game poker" data-type="poker" data-group="group1">Join Game</a>
+            {{/if}}
+          </p>
+          <p>MiniGame: 
+            {{#if groups.group1.members.minigame}}
+               <strong>{{groups.group1.members.minigame}}</strong>
+            {{else}}
+              <a href="" class="join-game minigame" data-type="minigame" data-group="group1">Join Game</a>
+            {{/if}}
+          </p>
+        </div>
+        
+        <div class="col-md-3">
+          <h4>Group 2</h4>
+          <p>Poker:
+            {{#if groups.group2.members.poker}}
+               <strong>{{groups.group2.members.poker}}</strong>
+            {{else}}
+              <a href="" class="join-game poker" data-type="poker" data-group="group2">Join Game</a>
+            {{/if}}
+          </p>
+          <p>MiniGame: 
+            {{#if groups.group2.members.minigame}}
+               <strong>{{groups.group2.members.minigame}}</strong>
+            {{else}}
+              <a href="" class="join-game minigame" data-type="minigame" data-group="group2">Join Game</a>
+            {{/if}}
+          </p>
+        </div>
+
+        <div class="col-md-3">
+          <h4>Group 3</h4>
+          <p>Poker:
+            {{#if groups.group3.members.poker}}
+               <strong>{{groups.group3.members.poker}}</strong>
+            {{else}}
+              <a href="" class="join-game poker" data-type="poker" data-group="group3">Join Game</a>
+            {{/if}}
+          </p>
+          <p>MiniGame: 
+            {{#if groups.group3.members.minigame}}
+               <strong>{{groups.group3.members.minigame}}</strong>
+            {{else}}
+              <a href="" class="join-game minigame" data-type="minigame" data-group="group3">Join Game</a>
+            {{/if}}
+          </p>
+        </div>
+
+        <div class="col-md-3">
+          <h4>Group 4</h4>
+          <p>Poker:
+            {{#if groups.group4.members.poker}}
+               <strong>{{groups.group4.members.poker}}</strong>
+            {{else}}
+              <a href="" class="join-game poker" data-type="poker" data-group="group4">Join Game</a>
+            {{/if}}
+          </p>
+          <p>MiniGame: 
+            {{#if groups.group4.members.minigame}}
+               <strong>{{groups.group4.members.minigame}}</strong>
+            {{else}}
+              <a href="" class="join-game minigame" data-type="minigame" data-group="group4">Join Game</a>
+            {{/if}}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {{>logoutForm}}
+  {{ else }}
+    {{>signupForm}}
+    {{>loginForm}}
+  {{/if}}
+
+</template>
+
+<template name="signupForm">
+  <form id="signup-form">
+    <h2>Sign Up</h2>
+
+    <label for="signup-username">Username</label>
+    <input type="text" id="signup-username" placeholder="Username" />
+
+    <label for="signup-password">Password</label>
+    <input type="password" id="signup-password" placeholder="Password" />
+
+    <button type="submit">Sign Up</button>
+  </form>
+</template>
+
+<template name="loginForm">
+  <form id="login-form">
+    <h2>Log In</h2>
+
+    <label for="login-username">Username</label>
+    <input type="text" id="login-username" placeholder="Username" />
+
+    <label for="login-password">Password</label>
+    <input type="password" id="login-password" placeholder="Password" />
+
+    <button type="submit">Log In</button>
+  </form>
+</template>
+
+<template name="logoutForm">
+  <form id="logout-form">
+    <button type="submit">Log Out</button>
+  </form>
+</template>
