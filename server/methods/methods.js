@@ -4,6 +4,20 @@ Meteor.methods({
 
   // Join a grou 
   'joinGroup': function(gameRoom, gameType, gameGroup) {
+    if (Meteor.user().game) {
+      if (Meteor.user().game.group) {
+        var $groupSet = {};
+        $groupSet[Meteor.user().game.group + '.members.' + Meteor.user().game.role] = "";
+
+        var userSet = {};
+        userSet['game.group'] = "";
+        userSet['game.role'] = "";
+        
+        Meteor.users.update(Meteor.userId(), {$unset: userSet}, {multi: true});
+        Groups.update(gameRoom, {$unset: $groupSet}, {multi: true});
+      }
+    }
+
     var $groupSet = {};
     $groupSet[gameGroup + '.members.' + gameType] = Meteor.userId();
 

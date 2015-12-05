@@ -40,7 +40,7 @@
           </p>
         </div>
 
-        <div class="col-md-3">
+        <!-- <div class="col-md-3">
           <h4>Group 3</h4>
           <p>Poker:
             {{#if groups.group3.members.poker}}
@@ -75,41 +75,47 @@
             {{/if}}
           </p>
         </div>
-      </div>
+ -->      </div>
     </div>
 
     {{>logoutForm}}
   {{ else }}
-    {{>signupForm}}
-    {{>loginForm}}
+    <div class="container">
+      <div class="row">
+        {{>signupForm}}
+      </div>
+      <div class="row">
+        {{>loginForm}}
+      </div>
+    </div>
   {{/if}}
 
 </template>
 
 <template name="signupForm">
-  <form id="signup-form">
+  <form id="signup-form" class="col-md-12">
     <h2>Sign Up</h2>
 
     <label for="signup-username">Username</label>
     <input type="text" id="signup-username" placeholder="Username" />
-
+    <br>
     <label for="signup-password">Password</label>
     <input type="password" id="signup-password" placeholder="Password" />
-
+    <br>
     <button type="submit">Sign Up</button>
   </form>
 </template>
 
 <template name="loginForm">
-  <form id="login-form">
+  <form id="login-form" class="col-md-12">
     <h2>Log In</h2>
 
     <label for="login-username">Username</label>
     <input type="text" id="login-username" placeholder="Username" />
-
+    <br>
     <label for="login-password">Password</label>
     <input type="password" id="login-password" placeholder="Password" />
-
+    <br>
     <button type="submit">Log In</button>
   </form>
 </template>

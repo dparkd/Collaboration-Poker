@@ -4,16 +4,13 @@ Template.userLogin.events({
   },
 
   'click .join-game': function(e) {
-    if (Meteor.user().game) {
-      if (Meteor.user().game.group) {
-        return console.log("already in game");
-      }
-    } else {
-      var gameRoom = Groups.findOne()._id;
-      var gameType = $(e.currentTarget).data('type');
-      var gameGroup = $(e.currentTarget).data('group');
-      Meteor.call('joinGroup', gameRoom, gameType, gameGroup);
-    }
+    e.preventDefault();
+    var gameRoom = Groups.findOne()._id;
+    var gameType = $(e.currentTarget).data('type');
+    var gameGroup = $(e.currentTarget).data('group');
+    Meteor.call('joinGroup', gameRoom, gameType, gameGroup);
+
+    Router.go('/game/'+gameGroup+'/'+gameType);
   }
 });
 
