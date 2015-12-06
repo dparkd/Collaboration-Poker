@@ -11,6 +11,8 @@ Template.userLogin.events({
     Meteor.call('joinGroup', gameRoom, gameType, gameGroup);
     Meteor.call('gameReady');
 
+    Session.set('group', gameGroup);
+
     Router.go('/game/'+gameGroup+'/'+gameType);
   }
 });

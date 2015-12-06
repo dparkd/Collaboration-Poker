@@ -17,6 +17,12 @@ Template.pokerPlayer.helpers({
     } else {
       return false
     }
+  },
+
+  'pokerHand': function() {
+    var obj = PokerGame.findOne({});
+
+    return obj[Session.get('group')];
   }
 });
 
@@ -24,5 +30,9 @@ Template.pokerPlayer.events({
   'click #enterAnswer': function(e) {
 
     Meteor.call('pokerSubmit');
+  },
+
+  'click .deal-card': function(event) {
+    Meteor.call('dealCard');
   }
 })

@@ -4,4 +4,8 @@ Meteor.publish("userDirectory", function() {
 
 Meteor.publish("groupDirectory", function() {
   return Groups.find();
-})
+});
+
+Meteor.publish("poker", function() {
+  return PokerGame.find();
+});

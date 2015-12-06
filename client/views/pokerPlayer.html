@@ -9,13 +9,9 @@
     <div class="row">
       <div class="col-md-12">
         {{#if gamePlay}}
-          <p>Game Play</p>
-
-          <br>
-
-          <a id="enterAnswer">
-            Submit
-          </a>
+          <p>Your Hand: <strong>{{pokerHand}}</strong></p>
+          <button class="btn btn-default deal-card">Deal</button>
+          <a id="enterAnswer">Submit</a>
         {{else}}
           <p>Wait your turn brah</p>
         {{/if}}
