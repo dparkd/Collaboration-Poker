@@ -2,7 +2,7 @@ Meteor.methods({
   'createGroup': function() {
   },
 
-  // Join a grou 
+  // Join a group
   'joinGroup': function(gameRoom, gameType, gameGroup) {
     if (Meteor.user().game) {
       if (Meteor.user().game.group) {
@@ -18,15 +18,14 @@ Meteor.methods({
       }
     }
 
+    // Variable setup for db
     var $groupSet = {};
     $groupSet[gameGroup + '.members.' + gameType] = Meteor.userId();
-
     var userSet = {};
     userSet['game.group'] = gameGroup;
     userSet['game.role'] = gameType;
-
+    // inserting into the db
     Groups.update(gameRoom, {$set: $groupSet}, {multi: true});
-
     Meteor.users.update(Meteor.userId(), {$set: userSet}, {multi: true});
   },
 
@@ -41,9 +40,37 @@ Meteor.methods({
     
     Meteor.users.update(Meteor.userId(), {$unset: userSet}, {multi: true});
     Groups.update(gameRoom, {$unset: $groupSet}, {multi: true});
+  },
+
+  // Set the initial gamestate when the game is ready
+  'gameReady': function() {
+    var obj = Groups.findOne({});
+    // Set the game state only when the game hasn't started
+    if (obj.group1.members.poker && obj.group1.members.minigame) {
+      Groups.update(obj._id, {$set: {'game.ready': true} }, {multi: true});
+      Groups.update(obj._id, {$set: {'game.state': 'minigame'} }, {multi: true});
+    } else {
+      return
+    }
+  },
+
+  // When minigame submits correct answer
+  'minigameSubmit': function() {
+    var gameRoom = Groups.findOne()._id;
+
+    Groups.update(gameRoom, {$set: {'game.state': 'poker'} }, {multi: true});
+  },
+
+  // When poker finishes
+  'pokerSubmit': function() {
+    var gameRoom = Groups.findOne()._id;
+
+    Groups.update(gameRoom, {$set: {'game.state': 'minigame'} }, {multi: true});
   }
 });
 
+
+// When a user logs out of the window
 UserStatus.events.on("connectionLogout", function(userId) { 
   var gameRoom = Groups.findOne()._id;
 
@@ -58,5 +85,7 @@ UserStatus.events.on("connectionLogout", function(userId) {
 
   Meteor.users.update(userId.userId, {$unset: userSet}, {multi: true});
   Groups.update(gameRoom, {$unset: $groupSet}, {multi: true});
+  Groups.update(gameRoom, {$set: {'game.ready': false} }, {multi: true});
 });
+
 

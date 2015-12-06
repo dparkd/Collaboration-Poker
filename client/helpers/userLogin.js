@@ -9,6 +9,7 @@ Template.userLogin.events({
     var gameType = $(e.currentTarget).data('type');
     var gameGroup = $(e.currentTarget).data('group');
     Meteor.call('joinGroup', gameRoom, gameType, gameGroup);
+    Meteor.call('gameReady');
 
     Router.go('/game/'+gameGroup+'/'+gameType);
   }

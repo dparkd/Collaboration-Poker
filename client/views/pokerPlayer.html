@@ -1,5 +1,33 @@
 <template name="pokerPlayer">
-  <p>{{hello}}</p>
 
-  {{>gameReady}}
+
+  <div class="container">
+
+  {{#if gameReady}}
+    <p><strong>{{currentUser.username}}</strong></p>
+
+    <div class="row">
+      <div class="col-md-12">
+        {{#if gamePlay}}
+          <p>Game Play</p>
+
+          <br>
+
+          <a id="enterAnswer">
+            Submit
+          </a>
+        {{else}}
+          <p>Wait your turn brah</p>
+        {{/if}}
+      </div>
+    </div>
+  {{else}}
+    <p>Game is not ready to play</p>
+  {{/if}}
+
+  
+  </div>
+
+
+  
 </template>

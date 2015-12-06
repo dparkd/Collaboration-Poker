@@ -1,23 +1,20 @@
 <template name="pokerTable">
   <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <h4>Group1</h4>
-        <p>poker: {{groups.group1.members.poker}}</p>
-        <p>minigame: {{groups.group1.members.minigame}}</p>
 
-        <h4>Group2</h4>
-        <p>poker: {{groups.group2.members.poker}}</p>
-        <p>minigame: {{groups.group2.members.minigame}}</p>
+    <div class="jumbotron">
+      <div class="row">
+        <div class="col-md-12">
+          <p>Game State: {{groups.game.state}}</p>
+        </div>
+      </div>  
 
-        <h4>Group3</h4>
-        <p>poker: {{groups.group3.members.poker}}</p>
-        <p>minigame: {{groups.group3.members.minigame}}</p>
-
-        <h4>Group4</h4>
-        <p>poker: {{groups.group4.members.poker}}</p>
-        <p>minigame: {{groups.group4.members.minigame}}</p>
+      <div class="row">
+        <div class="col-md-3">
+          <p>Poker: {{groups.group1.members.poker}}</p>
+          <p>Minigame: {{groups.group1.members.minigame}}</p>
+        </div>
       </div>
     </div>
+
   </div>  
 </template>

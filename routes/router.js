@@ -18,12 +18,8 @@ Router.route('/game/:_group/poker', function() {
 });
 
 Router.route('/game/:_group/minigame', function() {
-  this.render('pokerPlayer', {
+  this.render('minigamePlayer', {
     data: function() {
-      templateData = {
-        hello: 'minigame'
-      }
-      return templateData;
     }
   });
 });
