@@ -1,29 +1,20 @@
 Template.pokerPlayer.helpers({
-  'gamePlay': function() {
-    var obj = Groups.findOne({});
-    
-    if (obj.game.state === 'poker') {
-      return true
-    } else {
-      return false
-    }
-  },
-
-  'gameReady': function() {
-    var obj = Groups.findOne({});
-
-    if (obj.game.ready) {
-      return true
-    } else {
-      return false
-    }
-  },
-
-  'pokerHand': function() {
+  'player': function() {
     var obj = PokerGame.findOne({});
 
     return obj[Session.get('group')];
-  }
+  },
+
+  'pokerTurn': function() {
+    var obj = PokerGame.findOne({});
+
+    if (obj.currentPlayer === Session.get('group')) {
+      return true
+    } else {
+      return false
+    }
+  },
+
 });
 
 Template.pokerPlayer.events({
@@ -34,5 +25,13 @@ Template.pokerPlayer.events({
 
   'click .deal-card': function(event) {
     Meteor.call('dealCard');
+  },
+
+  'click .btn-poker': function(eve) {
+    var userAction = $(eve.currentTarget).data('action');
+
+    if (userAction === 'fold') {
+      Meteor.call('fold', Meteor.user()._id);
+    }
   }
 })

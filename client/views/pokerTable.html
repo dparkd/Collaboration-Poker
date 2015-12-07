@@ -4,14 +4,30 @@
     <div class="jumbotron">
       <div class="row">
         <div class="col-md-12">
-          <p>Game State: {{groups.game.state}}</p>
+          {{#if equals gameState.game.ready true}}
+            <p>Game is ready</p>
+          {{else}}
+            <p>Game is not ready</p>
+          {{/if}}
+
+          <p>Game State: {{gameState.game.state}}</p>
+
+          {{#if equals gameState.game.state 'poker'}}
+            {{#if equals pokerGame.pokerState 'start'}}
+              <p>Round: Start</p>
+            {{/if}}
+            <p>Poker Player: {{pokerGame.currentPlayer}}</p>
+          {{/if}}
         </div>
       </div>  
 
       <div class="row">
-        <div class="col-md-3">
-          <p>Poker: {{groups.group1.members.poker}}</p>
-          <p>Minigame: {{groups.group1.members.minigame}}</p>
+        <div class="col-md-12">
+          {{#if equals gameState.game.state 'dealCards'}}
+            <button class="btn btn-primary btn-deal">Deal Cards</button>
+          {{/if}}
+
+          <button class="btn btn-danger btn-reset">Reset Poker Cards</button>
         </div>
       </div>
     </div>

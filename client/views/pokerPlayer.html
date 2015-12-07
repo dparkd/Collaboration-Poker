@@ -3,17 +3,29 @@
 
   <div class="container">
 
-  {{#if gameReady}}
+  {{#if equals gameState.game.ready true}}
     <p><strong>{{currentUser.username}}</strong></p>
 
     <div class="row">
       <div class="col-md-12">
-        {{#if gamePlay}}
-          <p>Your Hand: <strong>{{pokerHand}}</strong></p>
-          <button class="btn btn-default deal-card">Deal</button>
-          <a id="enterAnswer">Submit</a>
-        {{else}}
-          <p>Wait your turn brah</p>
+        <p>Your Hand: <strong>{{player.card}}</strong></p>
+        <p>Chip Count: <strong>{{player.chips}}</strong></p>
+        {{#if equals gameState.game.state 'poker'}}
+          {{#if equals pokerGame.poker.currentPlayer currentUser.game.group}}
+            <button class="btn btn-primary btn-poker" data-action="call">Call</button>
+            <button class="btn btn-success btn-poker" data-action="bet">Bet</button>
+            <button class="btn btn-danger btn-poker" data-action="fold">Fold</button>
+          {{else}}
+            <p>Someone is deciding on a bet</p>
+          {{/if}}
+        {{/if}}
+
+        {{#if equals gameState.game.state 'minigame'}}
+          <p>Minigame needs to be played</p>
+        {{/if}}
+
+        {{#if equals gameState.game.state 'dealCards'}}
+          <p>Cards need to be dealth</p>
         {{/if}}
       </div>
     </div>

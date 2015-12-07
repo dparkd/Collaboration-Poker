@@ -1,33 +1,80 @@
 <template name="minigamePlayer">
 
   <div class="container">
-
-  {{#if gameReady}}
+  
+  <!-- Minigame controls -->
+  {{#if equals gameState.game.ready true}}
     <p><strong>{{currentUser.username}}</strong></p>
-
     <div class="row">
       <div class="col-md-12">
-        {{#if gamePlay}}
-          <p>Game Play</p>
+        {{#if equals gameState.game.state 'minigame'}}
+          <p>Question: What is 1+1?</p>
 
-          <br>
-
-          <a id="enterAnswer">
-            Submit
-          </a>
-        {{else}}
-          <p>Wait your turn brah</p>
+          <button class="btn choice" data-choice="a">42</button>
+          <button class="btn choice" data-choice="b">2</button>
+          <button class="btn choice" data-choice="c">It's over 9000</button>
+        {{/if}}
+        {{#if equals gameState.game.state 'poker'}}
+          <p>Poker is being played</p>
+        {{/if}}
+        {{#if equals gameState.game.state 'chooseCard'}}
+          {{#if equals pokerGame.minigame.state 'card1'}}
+            {{#if equals pokerGame.minigame.card1.winner myGroup}}
+              <p>Choose a card</p>
+              <button class="btn" data-toggle="modal" data-target="#cardModal">Choose card</button>
+            {{/if}}
+          {{/if}}
+          {{#if equals pokerGame.minigame.state 'card2'}}
+            {{#if equals pokerGame.minigame.card2.winner myGroup}}
+              <p>Choose a card</p>
+              <button class="btn" data-toggle="modal" data-target="#cardModal">Choose card</button>
+            {{/if}}
+          {{/if}}
+          {{>cardModal}}
         {{/if}}
       </div>
     </div>
   {{else}}
     <p>Game is not ready to play</p>
   {{/if}}
-
   
+  <!-- See the poker players -->
+  <div class="row">
+    <div class="col-md-4">
+      <h2>Player 1</h2>
+      <p>Card: {{pokerGame.group1.card}}</p>
+      <p>Chip Count: {{pokerGame.group1.chips}}</p>
+    </div>
+
+    <div class="col-md-4">
+      <h2>Player 2</h2>
+      <p>Card: {{pokerGame.group2.card}}</p>
+      <p>Chip Count: {{pokerGame.group2.chips}}</p>
+    </div>
+  </div>
+
   </div>
 
   
+</template>
+
+<template name="cardModal">
+  <!-- Modal -->
+  <div class="modal fade" id="cardModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel">Choose a Card</h4>
+        </div>
+        <div class="modal-body">
+          {{#each pokerGame.cards}}
+            <button class="btn choose-card" data-card="{{this}}" data-dismiss="modal">{{this}}</button>
+          {{/each}}
+        </div>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 

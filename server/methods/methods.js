@@ -45,20 +45,14 @@ Meteor.methods({
   // Set the initial gamestate when the game is ready
   'gameReady': function() {
     var obj = Groups.findOne({});
+    
     // Set the game state only when the game hasn't started
     if (obj.group1.members.poker && obj.group1.members.minigame) {
       Groups.update(obj._id, {$set: {'game.ready': true} }, {multi: true});
-      Groups.update(obj._id, {$set: {'game.state': 'minigame'} }, {multi: true});
+      Groups.update(obj._id, {$set: {'game.state': 'dealCards'} }, {multi: true});
     } else {
       return
     }
-  },
-
-  // When minigame submits correct answer
-  'minigameSubmit': function() {
-    var gameRoom = Groups.findOne()._id;
-
-    Groups.update(gameRoom, {$set: {'game.state': 'poker'} }, {multi: true});
   },
 
   // When poker finishes

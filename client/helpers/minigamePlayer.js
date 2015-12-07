@@ -1,23 +1,6 @@
 Template.minigamePlayer.helpers({
-  'gamePlay': function() {
-    var obj = Groups.findOne({});
-    if (obj.game) {
-      if (obj.game.state === 'minigame') {
-        return true
-      } else {
-        return false
-      }
-    }
-  },
-
-  'gameReady': function() {
-    var obj = Groups.findOne({});
-
-    if (obj.game.ready) {
-      return true
-    } else {
-      return false
-    }
+  'myGroup': function() {
+    return Session.get('group');
   }
 });
 
@@ -25,5 +8,18 @@ Template.minigamePlayer.events({
   'click #enterAnswer': function(e) {
 
     Meteor.call('minigameSubmit');
+  },
+
+  'click .choice': function(ev) {
+    var userChoice = $(ev.currentTarget).data('choice');
+
+    Meteor.call('checkAnswer', userChoice);
+  },
+
+  'click .choose-card': function(ew) {
+    var userCard = $(ew.currentTarget).data('card');
+    ew.preventDefault();
+    $('.modal-backdrop').remove();
+    Meteor.call('chooseCard', userCard);
   }
 })
