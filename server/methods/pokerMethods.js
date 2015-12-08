@@ -20,7 +20,8 @@ var resetBoard = function() {
     'poker.currentPlayer': "group1",
     'poker.betAmt': 0,
     'poker.pot': 0,
-    'poker.players': ['group1', 'group2']
+    'poker.players': ['group1', 'group2'],
+    'poker.startPlayer': "group1"
   }});
 }
 
@@ -122,6 +123,11 @@ Meteor.methods({
   'call': function(userGroup) {
     var poker = PokerGame.findOne();
 
+    // update the pot 
+    var called = {}; 
+    called['poker.pot'] = parseInt(poker.poker.betAmt);
+    PokerGame.update(poker._id, {$inc: called});
+
     // remove chips from the person who called
     var chips = {};
     chips[userGroup+'.chips'] = -(poker.poker.betAmt);
@@ -165,7 +171,8 @@ Meteor.methods({
       'poker.cardState': "start",
       'poker.currentPlayer': "group1",
       'poker.betAmt': 0,
-      'poker.pot': 0
+      'poker.pot': 0,
+      'poker.startPlayer': "group1"
     }});
   }
 });

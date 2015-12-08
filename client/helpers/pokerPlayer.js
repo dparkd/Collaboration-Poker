@@ -37,6 +37,10 @@ Template.pokerPlayer.events({
     if (userAction === 'call') {
       Meteor.call('call', Meteor.user().game.group);
     }
+
+    if (userAction === 'check') {
+      Meteor.call('check');
+    }
   },
 
   'click .submit-bet': function(e, template) {

@@ -14,8 +14,12 @@
           {{#if equals pokerGame.poker.currentPlayer currentUser.game.group}}
             
             <p>Bet Amount: {{pokerGame.poker.betAmt}}</p>
-
-            <button class="btn btn-primary btn-poker" data-action="call">Call</button>
+            
+            {{#if equals pokerGame.poker.betAmt 0}}
+              <button class="btn btn-primary btn-poker" data-action="call">Call</button>
+            {{else}}
+              <button class="btn btn-primary btn-poker" data-action="check">Check</button>
+            {{/if}}
             <button class="btn btn-success btn-poker" data-action="bet" data-toggle="modal" data-target="#betModal">Bet</button>
             <button class="btn btn-danger btn-poker" data-action="fold">Fold</button>
 
