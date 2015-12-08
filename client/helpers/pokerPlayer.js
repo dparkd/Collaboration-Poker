@@ -23,15 +23,26 @@ Template.pokerPlayer.events({
     Meteor.call('pokerSubmit');
   },
 
-  'click .deal-card': function(event) {
+  'click .deal-card': function(e) {
     Meteor.call('dealCard');
   },
 
-  'click .btn-poker': function(eve) {
-    var userAction = $(eve.currentTarget).data('action');
+  'click .btn-poker': function(e) {
+    var userAction = $(e.currentTarget).data('action');
 
     if (userAction === 'fold') {
-      Meteor.call('fold', Meteor.user()._id);
+      Meteor.call('fold', Session.get('group'));
     }
-  }
+
+    if (userAction === 'call') {
+      Meteor.call('call', Meteor.user().game.group);
+    }
+  },
+
+  'click .submit-bet': function(e, template) {
+    e.preventDefault();
+    var betAmt = template.find('#betAmt').value;
+    $('.modal-backdrop').remove();
+    Meteor.call('bet', Meteor.user().game.group, betAmt);
+  }, 
 })

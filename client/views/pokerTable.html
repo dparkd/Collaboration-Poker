@@ -17,6 +17,16 @@
               <p>Round: Start</p>
             {{/if}}
             <p>Poker Player: {{pokerGame.currentPlayer}}</p>
+
+            <!-- Display the poker cards -->
+            <div class="col-md-6">
+              {{#if equals pokerGame.poker.cardState 'card1'}}
+                <p>Card1: {{pokerGame.playcards.card1}}</p>
+              {{/if}}
+              {{#if equals pokerGame.poker.cardState 'card2'}}
+                <p>Card2: {{pokerGame.playcards.card2}}</p>
+              {{/if}}
+            </div>
           {{/if}}
         </div>
       </div>  

@@ -12,11 +12,16 @@
         <p>Chip Count: <strong>{{player.chips}}</strong></p>
         {{#if equals gameState.game.state 'poker'}}
           {{#if equals pokerGame.poker.currentPlayer currentUser.game.group}}
+            
+            <p>Bet Amount: {{pokerGame.poker.betAmt}}</p>
+
             <button class="btn btn-primary btn-poker" data-action="call">Call</button>
-            <button class="btn btn-success btn-poker" data-action="bet">Bet</button>
+            <button class="btn btn-success btn-poker" data-action="bet" data-toggle="modal" data-target="#betModal">Bet</button>
             <button class="btn btn-danger btn-poker" data-action="fold">Fold</button>
+
+            {{>betModal}}
           {{else}}
-            <p>Someone is deciding on a bet</p>
+            <p>Someone is deciding what to do</p>
           {{/if}}
         {{/if}}
 
@@ -35,7 +40,28 @@
 
   
   </div>
-
-
-  
 </template>
+
+<template name="betModal">
+  <div class="modal fade" id="betModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel">Amount to bet?</h4>
+        </div>
+        <div class="modal-body">
+          <input type="text" id="betAmt" placeholder="Bet Amount">
+          <button class="btn btn-primary submit-bet">Bet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+
+
+
+
+
+
+

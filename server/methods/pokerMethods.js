@@ -8,19 +8,19 @@ var resetBoard = function() {
 
   // Reset the poker
   PokerGame.update(poker._id, {$set: {
-    currentPlayer: 'group1', 
     cards: [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10],
-    'group1.card': "", 
-    'group1.chips': "", 
-    'group2.card': "", 
-    'group2.chips': "", 
+    'group1.card': "",  
+    'group2.card': "",  
     'playcards.card1': "", 
     'playcards.card2': "",
     'minigame.card1.winner': "",
     'minigame.card2.winner': "",
     'minigame.state': "card1",
     'poker.cardState': "start",
-    'poker.currentPlayer': "group1"
+    'poker.currentPlayer': "group1",
+    'poker.betAmt': 0,
+    'poker.pot': 0,
+    'poker.players': ['group1', 'group2']
   }});
 }
 
@@ -72,8 +72,73 @@ Meteor.methods({
   },
 
   // Fold function
-  'fold': function(userId) {
+  'fold': function(group) {
+    var poker = PokerGame.findOne();
+
+    // object to remove the player
+    var player = {};
+    var players = poker.poker.players;
+    var playerIndex = players.indexOf(group);
+    if (playerIndex > -1) {
+      players.splice(playerIndex, 1);
+    }
+
+    player['poker.players'] = players;
+
+    PokerGame.update(poker._id, {$set: player});
+
     resetBoard();
+  },
+
+  // Betting method and function
+  'bet': function(userGroup, amount) {
+    var poker = PokerGame.findOne();
+    var betAmt = {};
+    var pot = {};
+
+    // remove chips from the user
+    var chips = {};
+    chips[userGroup+'.chips'] = -amount;
+    PokerGame.update(poker._id, {$inc: chips});
+    
+    if (poker.poker.currentPlayer === 'group1') {
+      PokerGame.update(poker._id, {$set: {'poker.currentPlayer': 'group2'}});
+
+      betAmt['poker.betAmt'] = parseInt(amount);
+      pot['poker.pot'] = parseInt(amount);
+      PokerGame.update(poker._id, {$set: betAmt});
+      PokerGame.update(poker._id, {$inc: pot});
+    } else {
+      PokerGame.update(poker._id, {$set: {'poker.currentPlayer': 'group1'}});
+
+      betAmt['poker.betAmt'] = parseInt(amount);
+      pot['poker.pot'] = parseInt(amount);
+      PokerGame.update(poker._id, {$set: betAmt});
+      PokerGame.update(poker._id, {$inc: pot});
+    }
+  },
+
+  // Calling the bet
+  'call': function(userGroup) {
+    var poker = PokerGame.findOne();
+
+    // remove chips from the person who called
+    var chips = {};
+    chips[userGroup+'.chips'] = -(poker.poker.betAmt);
+    PokerGame.update(poker._id, {$inc: chips});
+
+    // Reset the betting slot
+    PokerGame.update(poker._id, {$set: {'poker.betAmt': 0}});
+
+    // changing the poker state
+    if (poker.poker.cardState === 'start') {
+      PokerGame.update(poker._id, {$set: {'poker.cardState': 'card1'}});
+    } else if (poker.poker.cardState === 'card1') {
+      PokerGame.update(poker._id, {$set: {'poker.cardState': 'card2'}});
+    } else {
+      resetBoard();
+      PokerGame.update(poker._id, {$set: {'poker.cardState': 'start'}});
+    }
   },
 
   // Reseting cards for easy development 
@@ -87,7 +152,6 @@ Meteor.methods({
 
     // Reset the poker
     PokerGame.update(poker._id, {$set: {
-      currentPlayer: 'group1', 
       cards: [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10],
       'group1.card': "", 
       'group1.chips': "", 
@@ -99,7 +163,9 @@ Meteor.methods({
       'minigame.card2.winner': "",
       'minigame.state': "card1",
       'poker.cardState': "start",
-      'poker.currentPlayer': "group1"
+      'poker.currentPlayer': "group1",
+      'poker.betAmt': 0,
+      'poker.pot': 0
     }});
   }
 });

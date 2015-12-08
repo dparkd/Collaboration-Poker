@@ -29,8 +29,10 @@ if (PokerGame.find().count() == 0) {
       card2: ""
     },
     poker: {
+      players: ['group1', 'group2'],
       cardState: "start",
-      currentPlayer: "group1"
+      currentPlayer: "group1",
+      pot: 0
     }
   });
 }

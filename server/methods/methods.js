@@ -49,7 +49,6 @@ Meteor.methods({
     // Set the game state only when the game hasn't started
     if (obj.group1.members.poker && obj.group1.members.minigame) {
       Groups.update(obj._id, {$set: {'game.ready': true} }, {multi: true});
-      Groups.update(obj._id, {$set: {'game.state': 'dealCards'} }, {multi: true});
     } else {
       return
     }
