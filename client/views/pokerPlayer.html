@@ -16,14 +16,21 @@
             <p>Bet Amount: {{pokerGame.poker.betAmt}}</p>
             
             {{#if equals pokerGame.poker.betAmt 0}}
-              <button class="btn btn-primary btn-poker" data-action="call">Call</button>
-            {{else}}
               <button class="btn btn-primary btn-poker" data-action="check">Check</button>
+            {{else}}
+              <button class="btn btn-primary btn-poker" data-action="call">Call</button>
             {{/if}}
-            <button class="btn btn-success btn-poker" data-action="bet" data-toggle="modal" data-target="#betModal">Bet</button>
+
+            {{#if equals pokerGame.poker.betAmt 0}}
+              <button class="btn btn-success btn-poker" data-action="bet" data-toggle="modal" data-target="#betModal">Bet</button>
+            {{else}}
+              <button class="btn btn-success btn-poker" data-action="bet" data-toggle="modal" data-target="#raiseModal">Raise</button>
+            {{/if}}
+
             <button class="btn btn-danger btn-poker" data-action="fold">Fold</button>
 
             {{>betModal}}
+            {{>raiseModal}}
           {{else}}
             <p>Someone is deciding what to do</p>
           {{/if}}
@@ -56,6 +63,24 @@
         <div class="modal-body">
           <input type="text" id="betAmt" placeholder="Bet Amount">
           <button class="btn btn-primary submit-bet">Bet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<template name="raiseModal">
+  <div class="modal fade" id="raiseModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel">Amount to raise?</h4>
+        </div>
+        <div class="modal-body">
+          <p>Current Bet: {{pokerGame.poker.betAmt}}</p>
+          <input type="text" id="raiseAmt" placeholder="Bet Amount">
+          <button class="btn btn-primary submit-raise">Raise</button>
         </div>
       </div>
     </div>

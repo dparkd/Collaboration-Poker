@@ -39,7 +39,7 @@ Template.pokerPlayer.events({
     }
 
     if (userAction === 'check') {
-      Meteor.call('check');
+      Meteor.call('check', Meteor.user().game.group);
     }
   },
 
@@ -49,4 +49,11 @@ Template.pokerPlayer.events({
     $('.modal-backdrop').remove();
     Meteor.call('bet', Meteor.user().game.group, betAmt);
   }, 
+
+  'click .submit-raise': function(e, template) {
+    e.preventDefault();
+    var raiseAmt = template.find('#raiseAmt').value;
+    $('.modal-backdrop').remove();
+    Meteor.call('raise', Meteor.user().game.group, raiseAmt);
+  }
 })
