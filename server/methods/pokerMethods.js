@@ -29,7 +29,87 @@ var resetBoard = function() {
 
 // Evaluate the poker hands of each player
 var evaluateCards = function() {
-  
+  var poker = PokerGame.findOne(); 
+
+  // player cards
+  var p1 = poker.group1.card;
+  var p2 = poker.group2.card; 
+
+  // play cards
+  var c1 = poker.playcards.card1; 
+  var c2 = poker.playcards.card2; 
+
+  // Hand states 
+  var p1hand, p2hand;
+
+  // Player 1
+  // Check for triple
+  if (p1 == c1 && p1 == c2) {
+    p1hand = "triple"; 
+  } else {
+    // check for straight
+    if (Math.abs(p1 - c1) < 3 && Math.abs(p1 - c2) < 3 && p1 != c1 && p1 != c2) {
+      // Return if hand is a straight
+      p1hand = "straight";
+    } else {
+      // Check for pair 
+      if (p1 == c1) {
+        p1hand = "pair"; 
+      } else if (p1 == c2) {
+        p1hand = "pair"; 
+      } else {
+        // Return the hand value
+        p1hand = "kicker";
+      }
+    }
+  }
+
+  // Player 2
+  // Check for triple
+  if (p2 == c1 && p2 == c2) {
+    p2hand = "triple"; 
+  } else {
+    // check for straight
+    if (Math.abs(p2 - c1) < 3 && Math.abs(p2 - c2) < 3 && p2 != c1 && p2 != c2) {
+      // Return if hand is a straight
+      p2hand = "straight";
+    } else {
+      // Check for pair 
+      if (p2 === c1) {
+        p2hand = "pair"; 
+      } else if (p2 === c2) {
+        p2hand = "pair"; 
+      } else {
+        // Return the hand value
+        p2hand = "kicker";
+      }
+    }
+  }
+
+  // print to the console 
+  console.log(p1hand + ' ' + p2hand);
+
+  // Check if both players have the same hand 
+  if (p1hand === p2hand) {
+    if (p1 > p2) {
+      PokerGame.update(poker._id, {$inc: {'group1.chips': poker.poker.pot}});
+    } else {
+      PokerGame.update(poker._id, {$inc: {'group2.chips': poker.poker.pot}});
+    }
+    PokerGame.update(poker._id, {$set: {'poker.pot': 0}});
+  } else {
+    var rank = ['triple', 'straight', 'pair', 'kicker', 'undefined'];
+    var p1rank = rank.indexOf(p1hand);
+    var p2rank = rank.indexOf(p2hand);
+    console.log(p1rank + ' ' + p2rank);
+    
+    if (p1rank < p2rank) {
+      PokerGame.update(poker._id, {$inc: {'group1.chips': poker.poker.pot}});
+    } else {
+      PokerGame.update(poker._id, {$inc: {'group2.chips': poker.poker.pot}});
+    }
+    PokerGame.update(poker._id, {$set: {'poker.pot': 0}});
+  }
 }
 
 
@@ -51,7 +131,6 @@ Meteor.methods({
       var card = pokerCards[Math.floor(Math.random()*pokerCards.length)];
       var insCard = {};
       insCard['group'+i+'.card'] = card;
-      insCard['group'+i+'.chips'] = 300;
 
       // Remove the card from the cards array 
       var ia = pokerCards.indexOf(card);
@@ -85,19 +164,9 @@ Meteor.methods({
   'fold': function(group) {
     var poker = PokerGame.findOne();
 
-    // object to remove the player
-    var player = {};
-    var players = poker.poker.players;
-    var playerIndex = players.indexOf(group);
-    if (playerIndex > -1) {
-      players.splice(playerIndex, 1);
-    }
-
-    player['poker.players'] = players;
-
     var pot = poker.poker.pot;
     var playerWin = {};
-    if (poker.currentPlayer === 'group1') {
+    if (poker.poker.currentPlayer === 'group1') {
       playerWin['group2.chips'] = pot;
       PokerGame.update(poker._id, {$inc: playerWin});
     } else {
@@ -105,9 +174,8 @@ Meteor.methods({
       PokerGame.update(poker._id, {$inc: playerWin});
     }
 
-    PokerGame.update(poker._id, {$set: player});
-
-    resetBoard();
+    PokerGame.update(poker._id, {$set: {'poker.pot': 0}});
+    newRound();
   },
 
   // Betting method and function
@@ -139,14 +207,18 @@ Meteor.methods({
   },
 
   'raise': function(userGroup, amount) {
-    console.log('raise mother fucker');
     var poker = PokerGame.findOne();
     var betAmt = {};
     var pot = {};
 
+    // Call the previous betAmt first 
+    var called = {}; 
+    called['poker.pot'] = poker.poker.betAmt;
+    PokerGame.update(poker._id, {$inc: called});
+
     // remove chips from the user
     var chips = {};
-    chips[userGroup+'.chips'] = -amount - poker.poker.betAmt;
+    chips[userGroup+'.chips'] = - amount - poker.poker.betAmt;
     PokerGame.update(poker._id, {$inc: chips});
     
     if (poker.poker.currentPlayer === 'group1') {
@@ -172,7 +244,7 @@ Meteor.methods({
 
     // update the pot 
     var called = {}; 
-    called['poker.pot'] = parseInt(poker.poker.betAmt);
+    called['poker.pot'] = poker.poker.betAmt;
     PokerGame.update(poker._id, {$inc: called});
 
     // remove chips from the person who called
@@ -186,11 +258,14 @@ Meteor.methods({
     // changing the poker state
     if (poker.poker.cardState === 'start') {
       PokerGame.update(poker._id, {$set: {'poker.cardState': 'card1'}});
+      PokerGame.update(poker._id, {$set: {'poker.currentPlayer': 'group1'}});
     } else if (poker.poker.cardState === 'card1') {
       PokerGame.update(poker._id, {$set: {'poker.cardState': 'card2'}});
+      PokerGame.update(poker._id, {$set: {'poker.currentPlayer': 'group1'}});
     } else {
-      resetBoard();
+      evaluateCards();
       PokerGame.update(poker._id, {$set: {'poker.cardState': 'start'}});
+      PokerGame.update(poker._id, {$set: {'poker.currentPlayer': 'group1'}});
     }
   },
 
@@ -214,10 +289,8 @@ Meteor.methods({
 
         // Change the start player
         if (poker.poker.currentPlayer === 'group1') {
-          PokerGame.update(poker._id, {$set: {'poker.startPlayer': 'group2'}});
           PokerGame.update(poker._id, {$set: {'poker.currentPlayer': 'group2'}});
         } else {
-          PokerGame.update(poker._id, {$set: {'poker.startPlayer': 'group1'}});
           PokerGame.update(poker._id, {$set: {'poker.currentPlayer': 'group1'}});
         }
       } else if (poker.poker.cardState === 'card1') {
@@ -225,24 +298,20 @@ Meteor.methods({
 
         // Change the start player
         if (poker.poker.currentPlayer === 'group1') {
-          PokerGame.update(poker._id, {$set: {'poker.startPlayer': 'group2'}});
           PokerGame.update(poker._id, {$set: {'poker.currentPlayer': 'group2'}});
         } else {
-          PokerGame.update(poker._id, {$set: {'poker.startPlayer': 'group1'}});
           PokerGame.update(poker._id, {$set: {'poker.currentPlayer': 'group1'}});
         }
       } else {
-        resetBoard();
+        evaluateCards();
         PokerGame.update(poker._id, {$set: {'poker.cardState': 'start'}});
 
         // Change the start player
-        if (poker.poker.currentPlayer === 'group1') {
-          PokerGame.update(poker._id, {$set: {'poker.startPlayer': 'group2'}});
-          PokerGame.update(poker._id, {$set: {'poker.currentPlayer': 'group2'}});
-        } else {
-          PokerGame.update(poker._id, {$set: {'poker.startPlayer': 'group1'}});
-          PokerGame.update(poker._id, {$set: {'poker.currentPlayer': 'group1'}});
-        }
+        // if (poker.poker.currentPlayer === 'group1') {
+        //   PokerGame.update(poker._id, {$set: {'poker.currentPlayer': 'group2'}});
+        // } else {
+        //   PokerGame.update(poker._id, {$set: {'poker.currentPlayer': 'group1'}});
+        // }
       }
     }
   },
@@ -260,9 +329,36 @@ Meteor.methods({
     PokerGame.update(poker._id, {$set: {
       cards: [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10],
       'group1.card': "", 
-      'group1.chips': "", 
+      'group1.chips': 300, 
       'group2.card': "", 
-      'group2.chips': "", 
+      'group2.chips': 300, 
+      'playcards.card1': "", 
+      'playcards.card2': "",
+      'minigame.card1.winner': "",
+      'minigame.card2.winner': "",
+      'minigame.state': "card1",
+      'poker.cardState': "start",
+      'poker.currentPlayer': "group1",
+      'poker.betAmt': 0,
+      'poker.pot': 0,
+      'poker.startPlayer': "group1"
+    }});
+  },
+
+  // Reseting cards for easy development 
+  'newRound': function() {
+    var poker = PokerGame.findOne();
+    var group = Groups.findOne()._id;
+
+    // reset the game state
+    Groups.update(group, {$set: {'game.state': 'dealCards'}});
+
+
+    // Reset the poker
+    PokerGame.update(poker._id, {$set: {
+      cards: [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10],
+      'group1.card': "", 
+      'group2.card': "",  
       'playcards.card1': "", 
       'playcards.card2': "",
       'minigame.card1.winner': "",
@@ -279,7 +375,31 @@ Meteor.methods({
 
 
 
+var newRound = function() {
+  var poker = PokerGame.findOne();
+    var group = Groups.findOne()._id;
 
+    // reset the game state
+    Groups.update(group, {$set: {'game.state': 'dealCards'}});
+
+
+    // Reset the poker
+    PokerGame.update(poker._id, {$set: {
+      cards: [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10],
+      'group1.card': "", 
+      'group2.card': "",  
+      'playcards.card1': "", 
+      'playcards.card2': "",
+      'minigame.card1.winner': "",
+      'minigame.card2.winner': "",
+      'minigame.state': "card1",
+      'poker.cardState': "start",
+      'poker.currentPlayer': "group1",
+      'poker.betAmt': 0,
+      'poker.pot': 0,
+      'poker.startPlayer': "group1"
+    }});
+}
 
 
 

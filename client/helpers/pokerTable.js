@@ -8,5 +8,9 @@ Template.pokerTable.events({
 
   'click .btn-reset': function() {
     Meteor.call('resetCards');
+  },
+
+  'click .btn-round': function() {
+    Meteor.call('newRound');
   }
 })
